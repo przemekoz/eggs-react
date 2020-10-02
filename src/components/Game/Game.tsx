@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { GameClass } from "../../businessRules/Game/GameClass";
+import { BranchOffset, GameClass, SideOffset } from "../../businessRules/Game/GameClass";
 import { BasketPosition } from "../../businessRules/shared/types";
-import { Branch } from "../../shared/types";
 import { Background } from "../Background";
 import { Chicken } from "../Chicken";
 import { Container } from "../Container";
@@ -26,21 +25,29 @@ export const Game = ( props: Props ) => {
   const { game } = props;
 
   const [ status, setStatus ] = useState<GameStatus>( GameStatus.NOT_ACTIVE );
-  const [ basketPos, setBasketPos ] = useState<BasketPosition>( BasketPosition.LEFT_TOP );
-
-  console.log( "Game Component render" )
 
   const moveBasket = ( position: BasketPosition ) => () => {
     game.setBasketPosition( position );
-    setBasketPos( position );
+  };
+
+  const renderChicken = ( falls: SideOffset[] ): React.ReactNode => {
+    return falls.map( ( { side, offset }: SideOffset ) => (
+      <Chicken key={`${side}-${offset}`} side={side} offset={offset} />
+    ) );
+  };
+
+  const renderEggs = ( falls: BranchOffset[] ): React.ReactNode => {
+    return falls.map( ( { branch, offset }: BranchOffset ) => (
+      <Egg key={`${branch}-${offset}`} branch={branch} offset={offset} />
+    ) );
   };
 
   return (
     <>
       <Container>
-        <Chicken side={1} offset={3} />
-        <Egg branch={3} offset={1} />
-        <Wolf branch={basketPos} />
+        {renderEggs( game.getEggs() )}
+        {renderChicken( game.getFalls() )}
+        <Wolf branch={game.getBasketPosition()} />
         <Score score={game.getScore()} />
         <Fail fails={game.getFails()} />
         <Background />
@@ -50,18 +57,18 @@ export const Game = ( props: Props ) => {
         <tbody>
           <tr>
             <td>
-              <button onClick={moveBasket( BasketPosition.LEFT_TOP )}>Left Top - {BasketPosition.LEFT_TOP}</button>
+              <button onClick={moveBasket( BasketPosition.LEFT_TOP )}>(Q) Left Top - {BasketPosition.LEFT_TOP}</button>
             </td>
             <td>
-              <button onClick={moveBasket( BasketPosition.RIGHT_TOP )}>Right Top - {BasketPosition.RIGHT_TOP}</button>
+              <button onClick={moveBasket( BasketPosition.RIGHT_TOP )}>(P) Right Top - {BasketPosition.RIGHT_TOP}</button>
             </td>
           </tr>
           <tr>
             <td>
-              <button onClick={moveBasket( BasketPosition.LEFT_BOTTOM )}>Left Bottom - {BasketPosition.LEFT_BOTTOM}</button>
+              <button onClick={moveBasket( BasketPosition.LEFT_BOTTOM )}>(A) Left Bottom - {BasketPosition.LEFT_BOTTOM}</button>
             </td>
             <td>
-              <button onClick={moveBasket( BasketPosition.RIGHT_BOTTOM )}>Right Bottom - {BasketPosition.RIGHT_BOTTOM}</button>
+              <button onClick={moveBasket( BasketPosition.RIGHT_BOTTOM )}>(L) Right Bottom - {BasketPosition.RIGHT_BOTTOM}</button>
             </td>
           </tr>
         </tbody>

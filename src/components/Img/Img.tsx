@@ -9,6 +9,6 @@ interface Props {
 export const Img = ( props: Props ) => {
   const { name } = props;
   return (
-    <img src={getImagePath( name )} width={IMAGE_WIDHT} height={IMAGE_HEIGHT} />
+    <img src={getImagePath( name )} width={IMAGE_WIDHT} height={IMAGE_HEIGHT} alt="" />
   );
 };
