@@ -5,10 +5,10 @@ import { Game } from "./components/Game";
 import { levels } from './businessRules/levels';
 import { TimerClass } from "./businessRules/Timer/TimerClass";
 import { BasketPosition } from "./businessRules/shared/types";
-import { IMAGE_WIDHT } from "./shared/config";
 
 interface State {
   time: number;
+  running: boolean;
 }
 
 interface Props { }
@@ -25,17 +25,17 @@ export class App extends React.Component<Props, State> {
   private moveTimer: TimerClass;
   private timers: Timers[];
 
-  constructor(props: Props) {
-    super(props);
-    this.state = { time: Date.now() };
+  constructor( props: Props ) {
+    super( props );
+    this.state = { time: Date.now(), running: false };
     // this.start = this.start.bind( this );
     // this.pause = this.pause.bind( this );
     // this.reset = this.reset.bind( this );
-    this.game = new GameClass(levels);
+    this.game = new GameClass( levels );
 
-    this.dropTimer = new TimerClass(MAIN_GAME_LOOP, MAIN_GAME_LOOP * 8);
-    this.moveTimer = new TimerClass(MAIN_GAME_LOOP, MAIN_GAME_LOOP * 4);
-    const runChickenTimer = new TimerClass(MAIN_GAME_LOOP, MAIN_GAME_LOOP * 2);
+    this.dropTimer = new TimerClass( MAIN_GAME_LOOP, MAIN_GAME_LOOP * 8 );
+    this.moveTimer = new TimerClass( MAIN_GAME_LOOP, MAIN_GAME_LOOP * 4 );
+    const runChickenTimer = new TimerClass( MAIN_GAME_LOOP, MAIN_GAME_LOOP * 2 );
 
     this.timers = [
       {
@@ -60,73 +60,77 @@ export class App extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => {
-      this.start();
-      this.setState({ time: Date.now() });
-    }, MAIN_GAME_LOOP);
-    document.addEventListener("keydown", (event: KeyboardEvent) => { this.handleKey(event.key) });
+    this.start();
+    this.interval = setInterval( () => {
+      this.run();
+      this.setState( { time: Date.now() } );
+    }, MAIN_GAME_LOOP );
+    document.addEventListener( "keydown", ( event: KeyboardEvent ) => { this.handleKey( event.key ) } );
   }
 
-  handleKey(key: string) {
-    if (["q", "Q"].includes(key)) {
-      this.game.setBasketPosition(BasketPosition.LEFT_TOP);
+  handleKey( key: string ) {
+    if ( [ "q", "Q" ].includes( key ) ) {
+      this.game.setBasketPosition( BasketPosition.LEFT_TOP );
     }
-    if (["p", "P"].includes(key)) {
-      this.game.setBasketPosition(BasketPosition.RIGHT_TOP);
+    if ( [ "p", "P" ].includes( key ) ) {
+      this.game.setBasketPosition( BasketPosition.RIGHT_TOP );
     }
-    if (["l", "L"].includes(key)) {
-      this.game.setBasketPosition(BasketPosition.RIGHT_BOTTOM);
+    if ( [ "l", "L" ].includes( key ) ) {
+      this.game.setBasketPosition( BasketPosition.RIGHT_BOTTOM );
     }
-    if (["a", "A"].includes(key)) {
-      this.game.setBasketPosition(BasketPosition.LEFT_BOTTOM);
+    if ( [ "a", "A" ].includes( key ) ) {
+      this.game.setBasketPosition( BasketPosition.LEFT_BOTTOM );
     }
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+    clearInterval( this.interval );
   }
 
   handleClick() { }
 
   private start() {
+    this.setState( { running: true } );
+  }
+  
+  private stop() {
+    this.setState( { running: false } );
+  }
+
+  private run() {
     this.game.scan();
 
-    // this.showStats( this.game );
-
-    if (this.game.isNextLevel()) {
-      this.dropTimer.setTimer(this.game.getDropInterval());
-      this.moveTimer.setTimer(this.game.getMoveInterval());
+    if ( this.game.isNextLevel() ) {
+      console.log("nextLevel", this.game.getLevel())
+      this.dropTimer.setTimer( this.game.getDropInterval() );
+      this.moveTimer.setTimer( this.game.getMoveInterval() );
     }
 
-    this.timers.forEach(timerItem => {
-      if (timerItem.timer.canDo()) {
+    this.timers.forEach( timerItem => {
+      if ( timerItem.timer.canDo() ) {
         timerItem.method();
       }
       timerItem.timer.tick();
-    });
+    } );
 
-    if (this.game.getIsGameEnd() || this.game.getIsGameOver()) {
+    if ( this.game.getIsGameEnd() || this.game.getIsGameOver() ) {
       // setStatus( game.getIsGameEnd() ? GameStatus.GAME_END : GameStatus.GAME_OVER );
       this.stop();
     }
   }
 
-  private stop() {
-    console.log('stop')
-  }
-
-  private showStats(game: GameClass) {
-    console.groupCollapsed("Frame")
-    console.table(game.getState())
-    console.table({
+  private showStats( game: GameClass ) {
+    console.groupCollapsed( "Frame" )
+    console.table( game.getState() )
+    console.table( {
       basketPosition: game.getBasketPosition(),
       score: game.getScore(),
       fails: game.getFails(),
       level: game.getLevel(),
       isGameEnd: game.getIsGameEnd(),
       isGameOver: game.getIsGameOver(),
-    });
-    console.table(game.getFalls());
+    } );
+    console.table( game.getFalls() );
     console.groupEnd();
   };
 
@@ -140,8 +144,6 @@ export class App extends React.Component<Props, State> {
         <button onClick={reset}>Reset</button> */}
 
         <Game game={this.game} />
-
-
 
       </div>
     );

@@ -9,13 +9,13 @@ interface Props {
 export const Fail = ( props: Props ) => {
   const { fails } = props;
 
-  if ( fails < 1 || fails > 2 ) {
+  if ( fails < 0 || fails > 3 ) {
     return null;
   }
 
   return (
     <InnerContainer zIndex={200}>
-      <Img name={`fail_${fails}.png`} />
+      <Img name={`fail_${fails - 1}.png`} />
     </InnerContainer>
   );
 };

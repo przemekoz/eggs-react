@@ -6,6 +6,8 @@ import { Chicken } from "../Chicken";
 import { Container } from "../Container";
 import { Egg } from "../Egg";
 import { Fail } from "../Fail";
+import { GameEndInfo } from "../GameEndInfo";
+import { GameOverInfo } from "../GameOverInfo";
 import { Score } from "../Score";
 import { Wolf } from "../Wolf";
 
@@ -23,8 +25,6 @@ enum GameStatus {
 
 export const Game = ( props: Props ) => {
   const { game } = props;
-
-  const [ status, setStatus ] = useState<GameStatus>( GameStatus.NOT_ACTIVE );
 
   const moveBasket = ( position: BasketPosition ) => () => {
     game.setBasketPosition( position );
@@ -50,6 +50,8 @@ export const Game = ( props: Props ) => {
         <Wolf branch={game.getBasketPosition()} />
         <Score score={game.getScore()} />
         <Fail fails={game.getFails()} />
+        { game.getIsGameOver() && <GameOverInfo /> }
+        { game.getIsGameEnd() && <GameEndInfo /> }
         <Background />
       </Container>
 

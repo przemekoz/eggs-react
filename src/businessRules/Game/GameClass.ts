@@ -86,6 +86,7 @@ export class GameClass {
     this.getBranchOffsetArray().forEach( item => {
       const { branchId, offset } = item;
       if ( offset === this.maxElementOffset && this.state[ branchId ][ offset ] !== 0 ) {
+        this.moveItems();
         if ( this.basketPosition === branchId ) {
           this.increaseScore();
         } else {
@@ -132,7 +133,7 @@ export class GameClass {
   }
 
   isNextLevel(): boolean {
-    if ( this.score >= ( this.level + 1 ) * 30 ) {
+    if ( this.score >= ( this.level + 1 ) * 20 ) {
       return true;
     }
     return false;
