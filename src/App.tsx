@@ -6,9 +6,17 @@ import { levels } from './businessRules/levels';
 import { TimerClass } from "./businessRules/Timer/TimerClass";
 import { BasketPosition } from "./businessRules/shared/types";
 
+enum GameStatus {
+  NOT_RUNNING = "NOT_RUNNING",
+  RUNNING = "RUNNING",
+  GAME_OVER = "GAME_OVER",
+  GAME_END = "GAME_END",
+  PAUSE = "PAUSE",
+}
+
 interface State {
   time: number;
-  running: boolean;
+  status: GameStatus;
 }
 
 interface Props { }
@@ -27,7 +35,7 @@ export class App extends React.Component<Props, State> {
 
   constructor( props: Props ) {
     super( props );
-    this.state = { time: Date.now(), running: false };
+    this.state = { time: Date.now(), status: GameStatus.NOT_RUNNING };
     // this.start = this.start.bind( this );
     // this.pause = this.pause.bind( this );
     // this.reset = this.reset.bind( this );
@@ -57,12 +65,20 @@ export class App extends React.Component<Props, State> {
         }
       },
     ];
+
+    this.start = this.start.bind( this );
+    this.pause = this.pause.bind( this );
+    this.reset = this.reset.bind( this );
   }
 
   componentDidMount() {
-    this.start();
     this.interval = setInterval( () => {
-      this.run();
+
+      if ( this.state.status === GameStatus.RUNNING ) {
+        console.log(1)
+        this.run();
+      }
+
       this.setState( { time: Date.now() } );
     }, MAIN_GAME_LOOP );
     document.addEventListener( "keydown", ( event: KeyboardEvent ) => { this.handleKey( event.key ) } );
@@ -89,17 +105,22 @@ export class App extends React.Component<Props, State> {
 
   handleClick() { }
 
-  private start() {
-    this.setState( { running: true } );
+  start() {
+    this.setState( { status: GameStatus.RUNNING } );
   }
   
-  private stop() {
-    this.setState( { running: false } );
+  pause() {
+    this.setState( { status: GameStatus.PAUSE } );
   }
 
+  reset() {
+    this.game.reset();
+    this.setState( { status: GameStatus.NOT_RUNNING } );
+  }
+  
   private run() {
     this.game.scan();
-
+    
     if ( this.game.isNextLevel() ) {
       console.log("nextLevel", this.game.getLevel())
       this.dropTimer.setTimer( this.game.getDropInterval() );
@@ -112,10 +133,12 @@ export class App extends React.Component<Props, State> {
       }
       timerItem.timer.tick();
     } );
-
-    if ( this.game.getIsGameEnd() || this.game.getIsGameOver() ) {
-      // setStatus( game.getIsGameEnd() ? GameStatus.GAME_END : GameStatus.GAME_OVER );
-      this.stop();
+    
+    if ( this.game.getIsGameEnd() ) {
+      this.setState( { status: GameStatus.GAME_END } );
+    }
+    if ( this.game.getIsGameOver() ) {
+      this.setState( { status: GameStatus.GAME_OVER } );
     }
   }
 
@@ -139,9 +162,10 @@ export class App extends React.Component<Props, State> {
     // const { isProgress } = this.state;
     return (
       <div className="App">
-        {/* <button onClick={start}>Start</button>
-        <button onClick={pause}>Pause</button>
-        <button onClick={reset}>Reset</button> */}
+        
+        <button onClick={this.start}>Start</button>
+        <button onClick={this.pause}>Pause</button>
+        <button onClick={this.reset}>Reset</button>
 
         <Game game={this.game} />
 

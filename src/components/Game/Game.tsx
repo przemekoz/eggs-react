@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { BranchOffset, GameClass, SideOffset } from "../../businessRules/Game/GameClass";
 import { BasketPosition } from "../../businessRules/shared/types";
 import { Background } from "../Background";
@@ -15,13 +15,6 @@ interface Props {
   game: GameClass;
 }
 
-enum GameStatus {
-  NOT_ACTIVE = "NOT_ACTIVE",
-  ACTIVE = "ACTIVE",
-  GAME_OVER = "GAME_OVER",
-  GAME_END = "GAME_END",
-  PAUSE = "PAUSE",
-}
 
 export const Game = ( props: Props ) => {
   const { game } = props;

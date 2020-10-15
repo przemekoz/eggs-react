@@ -164,6 +164,7 @@ export class GameClass {
     this.fails = 0;
     this.level = 0;
     this.state = this.initState();
+    this.isGameOver = false;
     this.chickenState = this.initChickenState();
   }
 
