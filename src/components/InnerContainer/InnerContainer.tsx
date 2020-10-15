@@ -6,11 +6,8 @@ interface Props {
   children: React.ReactNode;
 }
 
-export const InnerContainer = ( props: Props ) => {
-  const { children, zIndex } = props;
-  return (
-    <div style={{ width: IMAGE_WIDHT, height: IMAGE_HEIGHT, position: "absolute", zIndex}}>
-      {children}
-    </div>
-  );
-};
+export const InnerContainer = ({ children, zIndex }: Props) => (
+  <div style={{ width: IMAGE_WIDHT, height: IMAGE_HEIGHT, position: "absolute", zIndex }}>
+    {children}
+  </div>
+);

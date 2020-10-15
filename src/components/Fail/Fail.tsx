@@ -6,10 +6,9 @@ interface Props {
   fails: number
 }
 
-export const Fail = ( props: Props ) => {
-  const { fails } = props;
+export const Fail = ( { fails }: Props ) => {
 
-  if ( fails < 0 || fails > 3 ) {
+  if ( fails < 1 || fails > 3 ) {
     return null;
   }
 

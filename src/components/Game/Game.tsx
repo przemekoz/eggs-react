@@ -15,9 +15,7 @@ interface Props {
   game: GameClass;
 }
 
-
-export const Game = ( props: Props ) => {
-  const { game } = props;
+export const Game = ( { game }: Props ) => {
 
   const moveBasket = ( position: BasketPosition ) => () => {
     game.setBasketPosition( position );

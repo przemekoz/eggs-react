@@ -75,7 +75,6 @@ export class App extends React.Component<Props, State> {
     this.interval = setInterval( () => {
 
       if ( this.state.status === GameStatus.RUNNING ) {
-        console.log(1)
         this.run();
       }
 

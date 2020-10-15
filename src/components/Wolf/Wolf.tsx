@@ -9,10 +9,7 @@ interface Props {
   branch: BasketPosition,
 }
 
-interface Props { }
-
-export const Wolf = ( props: Props ) => {
-  const { branch } = props;
+export const Wolf = ( { branch }: Props ) => {
   const side: Side = [ 0, 3 ].includes( branch ) ? Side.LEFT : Side.RIGHT;
   return (
     <>
