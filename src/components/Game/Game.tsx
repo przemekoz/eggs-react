@@ -1,4 +1,4 @@
-import React from "react";
+import React, { lazy, Suspense } from 'react';
 import { BranchOffset, GameClass, SideOffset } from "../../businessRules/Game/GameClass";
 import { BasketPosition } from "../../businessRules/shared/types";
 import { Background } from "../Background";
@@ -9,7 +9,11 @@ import { Fail } from "../Fail";
 import { GameEndInfo } from "../GameEndInfo";
 import { GameOverInfo } from "../GameOverInfo";
 import { Score } from "../Score";
-import { Wolf } from "../Wolf";
+
+const Wolf = lazy(() =>
+  import('../Wolf')
+    .then(({ Wolf }) => ({ default: Wolf })),
+);
 
 interface Props {
   game: GameClass;
@@ -38,7 +42,9 @@ export const Game = ( { game }: Props ) => {
       <Container>
         {renderEggs( game.getEggs() )}
         {renderChicken( game.getFalls() )}
-        <Wolf branch={game.getBasketPosition()} />
+        <Suspense fallback={<LoadingWolf />}>
+          <Wolf branch={game.getBasketPosition()} />
+        </Suspense>
         <Score score={game.getScore()} />
         <Fail fails={game.getFails()} />
         { game.getIsGameOver() && <GameOverInfo /> }
@@ -69,3 +75,8 @@ export const Game = ( { game }: Props ) => {
     </>
   );
 };
+
+
+const LoadingWolf = () => (
+  <div>Loading Wolf...</div>
+);

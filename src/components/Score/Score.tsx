@@ -1,4 +1,3 @@
-import { relative } from "path";
 import React from "react";
 import { InnerContainer } from "../InnerContainer";
 
